@@ -1,4 +1,4 @@
-# 2026_Capstone_PackagU
+# PackagU
 
 ## 🔖 Intro
 
