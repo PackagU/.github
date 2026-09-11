@@ -28,7 +28,7 @@ PackagU는 **건물을 고치지 않고 엘리베이터를 타는** 실내 택�
 | 시뮬레이션 | 왕복 배달 체인 10/10 연속 PASS · 데스크톱 Gazebo + Jetson 분산 E2E 3/3 완주 (2026-08-21) |
 | 실기 구동부 | 제작 완료 · 주행 동작 확인 (2026-09-11 팀 확인) |
 | 실기 LiDAR | Jetson에 RPLiDAR 연결 → `/scan` → SLAM Toolbox 지도 → RViz 표시 확인 (2026-09-10, 손에 들고 걷는 시험 매핑) |
-| **지금 하는 일** | 바퀴 오도메트리 + LiDAR로 **실기 주행 매핑** 준비 — Jetson 컨테이너 재현성(RViz2 포함 이미지) 정리 중 |
+| **지금 하는 일** | 바퀴 오도메트리 + LiDAR로 **실기 주행 매핑** 준비 — Jetson 이미지 재현(P02) 오프라인 검증 완료, 무동작 프로파일·장치·DDS 점검(P03) 진행 중 |
 
 실기 최신 코드는 [Code_Space · `lee/jetson-live`](https://github.com/PackagU/Code_Space/tree/lee/jetson-live)에 있습니다.
 Jetson `~/Code_Space` 작업 트리를 그대로 옮겨 오는 미러 브랜치라, 아직 커밋·리뷰 전인 변경도 들어 있습니다.
@@ -185,7 +185,7 @@ Jetson `~/Code_Space` 작업 트리를 그대로 옮겨 오는 미러 브랜치�
   - **compose 3종**: `docker-compose.linux.yml` · `docker-compose.windows.yml` · `docker-compose.jetson.yml`. Windows는 VcXsrv X11 forwarding으로 GUI를 띄웁니다.
   - **`scripts/check_portability.py`**: 절대경로·호스트 종속 설정이 코드에 섞이지 않았는지 검사. 이식성을 리뷰어의 눈이 아니라 스크립트로 지킵니다.
   - **GHCR 자동 발행**: `.github/workflows/publish-ghcr.yml`로 이미지를 `ghcr.io/packagu/ros2-humble-slam`에 push.
-  - **aarch64 이미지(`humble-jetson`)는 Jetson에서 구동 중입니다.** 같은 `Dockerfile.jetson`으로 Jetson에서 직접 다시 빌드해 재현하는 작업(RViz2 포함)이 진행 중입니다.
+  - **aarch64 이미지(`humble-jetson`)는 Jetson에서 구동 중입니다.** 같은 `Dockerfile.jetson`으로 Jetson에서 다시 빌드한 이미지(RViz2 포함)로 ROS 패키지 빌드와 오프라인 테스트 29개 통과까지 확인했습니다 (2026-09-11 오프라인 검증, 실장치 동작은 미확인).
   </details>
 
   <br>
