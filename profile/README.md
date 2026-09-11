@@ -27,7 +27,7 @@ PackagU는 **건물을 고치지 않고 엘리베이터를 타는** 실내 택�
 | --- | --- |
 | 시뮬레이션 | 왕복 배달 체인 10/10 연속 PASS · 데스크톱 Gazebo + Jetson 분산 E2E 3/3 완주 (2026-08-21) |
 | 실기 구동부 | 제작 완료 · 주행 동작 확인 (2026-09-11 팀 확인) |
-| 실기 LiDAR | Jetson에 RPLiDAR 연결 → `/scan` → SLAM Toolbox 지도 → RViz 표시 확인 (2026-09-10, 손에 들고 걷는 시험 매핑) |
+| 실기 LiDAR | Jetson에 RPLiDAR 연결 → `/scan` → SLAM Toolbox 지도 → RViz 표시 확인 (2026-09-10) · 손에 들고 걷는 핸드헬드 시험 맵과 posegraph 저장 (2026-09-11, 지도 품질 미평가) |
 | **지금 하는 일** | 바퀴 오도메트리 + LiDAR로 **실기 주행 매핑** 준비 — 주행 정지·오류 입력 계약 오프라인 검증(P04) 완료, 팔 시작·완료·취소 계약 점검(P05) 진행 중 |
 
 실기 최신 코드는 [Code_Space · `lee/jetson-live`](https://github.com/PackagU/Code_Space/tree/lee/jetson-live)에 있습니다.
@@ -280,6 +280,7 @@ PackagU
 │  │  ├─ run_kku_sim.sh              컨테이너 + Gazebo + SLAM + RViz 원커맨드
 │  │  ├─ run_field_mapping.sh        현장 실측 원커맨드 (launch → rosbag → 맵 저장 → 검증)
 │  │  ├─ *_handheld_mapping.sh       핸드헬드 매핑 빌드 · 시작 · 점검 · 종료 (LiDAR + fake odom + SLAM, 구동 장치 차단·/scan·/map 확인, SIGINT 종료)
+│  │  ├─ save_handheld_map.sh        핸드헬드 맵 + posegraph 저장 (덮어쓰기 · 위험한 이름 거부)
 │  │  ├─ probe_rplidar_node.sh       RPLiDAR 드라이버 단독 15초 기동 점검 (구동 · 팔 노드 미기동)
 │  │  ├─ run_rviz_jetson.sh          Jetson 화면에 RViz 사이드카 컨테이너 띄우기
 │  │  ├─ run_distributed_e2e.sh      데스크톱 Gazebo + Jetson 스택 분산 E2E
@@ -298,7 +299,8 @@ PackagU
 │  │  ├─ slam_pkg/
 │  │  │  ├─ config/                  slam_toolbox(실기 · 핸드헬드) · nav2_params · slam_view.rviz
 │  │  │  ├─ launch/                  slam_toolbox(실기) · handheld_mapping · kku_simulation · kku_navigation
-│  │  │  └─ maps/kku_virtual/        f1 · f2 · f3 가상 맵
+│  │  │  ├─ maps/kku_virtual/        f1 · f2 · f3 가상 맵
+│  │  │  └─ maps/handheld/           실기 핸드헬드 시험 맵 메타데이터 (yaml · 체크섬, 이미지·posegraph는 git 제외)
 │  │  ├─ drive_pkg/                  OpenCR 시리얼 브리지 · 차동 오도메트리 · teleop · drive_calib.yaml
 │  │  └─ robot_arm_pkg/              버튼 누름 시퀀스 노드 · 서보 프로토콜
 │  ├─ test_workspace/
