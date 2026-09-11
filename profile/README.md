@@ -280,6 +280,7 @@ PackagU
 │  │  ├─ run_kku_sim.sh              컨테이너 + Gazebo + SLAM + RViz 원커맨드
 │  │  ├─ run_field_mapping.sh        현장 실측 원커맨드 (launch → rosbag → 맵 저장 → 검증)
 │  │  ├─ *_handheld_mapping.sh       핸드헬드 매핑 빌드 · 시작 (LiDAR + fake odom + SLAM, 구동 장치 차단 확인)
+│  │  ├─ probe_rplidar_node.sh       RPLiDAR 드라이버 단독 15초 기동 점검 (구동 · 팔 노드 미기동)
 │  │  ├─ run_rviz_jetson.sh          Jetson 화면에 RViz 사이드카 컨테이너 띄우기
 │  │  ├─ run_distributed_e2e.sh      데스크톱 Gazebo + Jetson 스택 분산 E2E
 │  │  ├─ run_arm_press.py            로봇팔 버튼 누름 실행기
