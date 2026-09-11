@@ -356,10 +356,10 @@ bash scripts/bootstrap_workspace.sh        # 월드/맵 생성 (최초 1회)
 
 <br>
 
-건국대학교 전기전자공학부 4학년 · 전기전자종합설계 및 소프트웨어실습 (2026) · 종설 6조
+건국대학교 전기전자공학부 4학년 · 졸업작품
 
 | 팀원 | 역할 |
 | ---- | ---- |
 | **이준형** ([@JunhyungLee25](https://github.com/JunhyungLee25)) | SLAM · Nav2 · 시뮬레이션 · 층 전환 · 인프라 |
-| **한OO** ([@inonewater](https://github.com/inonewater)) | Fusion 360 모델링 · 주행 구동부 · Z축 리프트 |
-| **김OO** ([@DuckFrog123](https://github.com/DuckFrog123)) | 4 DOF 로봇팔 · 비주얼 서보잉 · 컨테이너 이미지 |
+| **한수민** ([@inonewater](https://github.com/inonewater)) | HW · Fusion 360 모델링 · 주행 구동부 · Z축 리프트 |
+| **이성덕** ([@DuckFrog123](https://github.com/DuckFrog123)) | 4 DOF 로봇팔 · 비주얼 서보잉 · 컨테이너 이미지 |
