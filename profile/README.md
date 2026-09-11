@@ -273,7 +273,7 @@ PackagU
 │  ├─ docker/
 │  │  ├─ Dockerfile                  개발용 amd64 (Gazebo · RViz · Nav2 · SLAM)
 │  │  ├─ Dockerfile.jetson           실기용 aarch64 (RViz2 · floor reader 런타임, Gazebo 제외)
-│  │  ├─ compose/                    linux · windows(VcXsrv) · jetson + jetson.env.example
+│  │  ├─ compose/                    linux · windows(VcXsrv) · jetson (+ safe 무동작 · lidar 전용 오버레이) + jetson.env.example
 │  │  └─ scripts/entrypoint.sh       필수 마운트 확인 후 기동
 │  ├─ scripts/
 │  │  ├─ bootstrap_workspace.sh      월드 · 맵 생성 (최초 1회)
@@ -287,7 +287,9 @@ PackagU
 │  │  ├─ udev/                       장치 별칭 udev 규칙 + 설치 스크립트
 │  │  ├─ generate_kku_worlds.py      건국대 신공학관 모사 F1/F2/F3 world 생성
 │  │  ├─ check_portability.py        호스트 종속 설정 검사
-│  │  ├─ test_*.py                   프로토콜 · launch · 배포 계약 테스트 (+ 이미지 런타임 의존성)
+│  │  ├─ jetson_preflight.py         실행 중인 Jetson 컨테이너의 무동작 · 라이다 배포 계약 점검 (읽기 전용)
+│  │  ├─ dds_contract_probe.py       DDS 계약 프로브 (늦은 구독 · QoS · 서비스 · tf_static · map)
+│  │  ├─ test_*.py · test_*.sh       프로토콜 · launch · 배포 · DDS 계약 테스트 (+ 이미지 런타임 의존성)
 │  │  └─ verify_jetson_*.sh          새 Jetson 이미지 안에서 소스 빌드 · 실행 파일 확인 (장치 없이)
 │  ├─ src/
 │  │  ├─ common_pkg/                 delivery_robot.urdf.xacro · kku_f1~f3.world · gazebo.launch.py
