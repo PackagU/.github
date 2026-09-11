@@ -156,7 +156,7 @@ Jetson `~/Code_Space` 작업 트리를 그대로 옮겨 오는 미러 브랜치�
   - **구조**: 2륜 차동 구동 + 볼롤러 베어링 1개. 직경 7 cm급 고무/우레탄 타이어(슬립 방지).
   - **토크 산정**: 정적 요구 약 2.4 N·m, **여유 2배 이상**을 확보하도록 모터를 선정합니다.
   - **하위 제어**: OpenCR 1.0 + Dynamixel 2륜. `LEFT_ID=1`, `RIGHT_ID=2`, `57600 bps`, Protocol 2.0, Velocity Control.
-  - **시리얼 브리지**: Jetson의 `opencr_bridge_node`가 `/cmd_vel`을 좌우 바퀴 RPM(`V` 프레임, 20 Hz)으로 바꿔 OpenCR에 보내고, OpenCR 피드백(`F` 프레임, 50 Hz)으로 `/odom`·TF·`/imu`를 발행합니다. `/cmd_vel`이 500 ms 끊기면 정지 명령을 보냅니다. 프로토콜은 `docs/deployment/02_opencr_serial_protocol.md`.
+  - **시리얼 브리지**: Jetson의 `opencr_bridge_node`가 `/cmd_vel`을 좌우 바퀴 RPM(`V` 프레임, 20 Hz)으로 바꿔 OpenCR에 보내고, OpenCR 피드백(`F` 프레임, 50 Hz)으로 `/odom`·TF·`/imu`를 발행합니다. `/cmd_vel`이 500 ms `[제안값]` 끊기거나, 첫 피드백 전·피드백 timeout·직렬 오류·범위 밖 명령/피드백이 생기면 가속 제한 없이 즉시 0으로 멈추고 `/drive/ready=false`를 냅니다. 속도·RPM 한계는 실측 전 `[제안값]`이고, 이 소프트웨어 정지가 MCU watchdog과 물리 E-Stop을 대신하지는 않습니다. 프로토콜은 `docs/deployment/02_opencr_serial_protocol.md`.
   - **배선·ID 설정·회전 테스트·좌우 보정 절차**는 `docs/opencr_dynamixel_wheel_test.md`에 단계별로 문서화되어 있습니다.
   - **구동부는 제작을 마치고 주행 동작을 확인했습니다** (2026-09-11 팀 확인). **배터리·DC-DC 컨버터 사양은 확정 대기** `[미확정]`. 이 결정이 URDF 관성값과 주행 시간을 동시에 묶고 있습니다.
   </details>
@@ -289,7 +289,7 @@ PackagU
 │  │  ├─ check_portability.py        호스트 종속 설정 검사
 │  │  ├─ jetson_preflight.py         실행 중인 Jetson 컨테이너의 무동작 · 라이다 배포 계약 점검 (읽기 전용)
 │  │  ├─ dds_contract_probe.py       DDS 계약 프로브 (늦은 구독 · QoS · 서비스 · tf_static · map)
-│  │  ├─ test_*.py · test_*.sh       프로토콜 · launch · 배포 · DDS 계약 테스트 (+ 이미지 런타임 의존성)
+│  │  ├─ test_*.py · test_*.sh       프로토콜 · 주행 안전 · launch · 배포 · DDS 계약 테스트 (+ 이미지 런타임 의존성)
 │  │  └─ verify_jetson_*.sh          새 Jetson 이미지 안에서 소스 빌드 · 실행 파일 확인 (장치 없이)
 │  ├─ src/
 │  │  ├─ common_pkg/                 delivery_robot.urdf.xacro · kku_f1~f3.world · gazebo.launch.py
