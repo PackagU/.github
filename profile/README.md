@@ -302,7 +302,7 @@ PackagU
 │  │  │  ├─ maps/kku_virtual/        f1 · f2 · f3 가상 맵
 │  │  │  └─ maps/handheld/           실기 핸드헬드 시험 맵 메타데이터 (yaml · 체크섬, 이미지·posegraph는 git 제외)
 │  │  ├─ drive_pkg/                  OpenCR 시리얼 브리지 · 차동 오도메트리 · teleop · drive_calib.yaml
-│  │  └─ robot_arm_pkg/              버튼 누름 시퀀스 노드 · 서보 프로토콜
+│  │  └─ robot_arm_pkg/              버튼 누름 시퀀스 노드 · 서보 프로토콜 · 피드백 기반 실행 계약(시작 · 완료 · 취소)
 │  ├─ test_workspace/
 │  │  ├─ elevator_mission/           미션 트리 · 행동 · 좌표 레지스트리 · 직교 라우터
 │  │  ├─ elevator_auto_map_switch/   층 ↔ 맵 레지스트리 · 전환 상태머신 · 오케스트레이터
