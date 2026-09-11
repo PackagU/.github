@@ -19,6 +19,20 @@ PackagU는 **건물을 고치지 않고 엘리베이터를 타는** 실내 택�
 이 질문에서 PackagU는 버튼을 직접 누르는 쪽을 골랐습니다. 인식과 정렬이라는 어려운 문제를 저희가 떠안는 대신,
 로봇이 갈 수 있는 건물의 수를 얻었습니다.
 
+## 🚦 진행 현황
+
+<sub>2026-09-11 기준</sub>
+
+| 영역 | 상태 |
+| --- | --- |
+| 시뮬레이션 | 왕복 배달 체인 10/10 연속 PASS · 데스크톱 Gazebo + Jetson 분산 E2E 3/3 완주 (2026-08-21) |
+| 실기 구동부 | 제작 완료 · 주행 동작 확인 (2026-09-11 팀 확인) |
+| 실기 LiDAR | Jetson에 RPLiDAR 연결 → `/scan` → SLAM Toolbox 지도 → RViz 표시 확인 (2026-09-10, 손에 들고 걷는 시험 매핑) |
+| **지금 하는 일** | 바퀴 오도메트리 + LiDAR로 **실기 주행 매핑** 준비 — Jetson 컨테이너 재현성(RViz2 포함 이미지) 정리 중 |
+
+실기 최신 코드는 [Code_Space · `lee/jetson-live`](https://github.com/PackagU/Code_Space/tree/lee/jetson-live)에 있습니다.
+Jetson `~/Code_Space` 작업 트리를 그대로 옮겨 오는 미러 브랜치라, 아직 커밋·리뷰 전인 변경도 들어 있습니다.
+
 ## 📸 Overview
 
 <!-- assets/robot_concept.png ← docs/capstone/졸작이미지예상도.png -->
@@ -125,7 +139,7 @@ PackagU는 **건물을 고치지 않고 엘리베이터를 타는** 실내 택�
 
   - **구성**: 총 길이 60 cm, 엔코더 내장 360° 서보 1개 + 180° 서보 3개 (4 DOF).
   - **엔드이펙터**: 고무 팁 또는 스프링 완충 구조. **버튼을 망가뜨리지 않는 것**이 요구사항입니다.
-  - **현재 상태**: `base → shoulder → elbow → wrist → end_effector` TF 정의 작업 중 `[미검증]`. TF가 서야 IK와 비주얼 서보잉이 그 위에 올라갑니다.
+  - **현재 상태**: 실측 포즈 기반 버튼 누름 사이클 3종(`press_cycle`)과 기동 homing이 `robot_arm_pkg`에 들어갔고, 원커맨드 실행기는 PR 검토 중입니다 `[미검증]`. 팔 TF(`base → … → end_effector`)가 서야 IK와 비주얼 서보잉이 그 위에 올라갑니다.
   - **비주얼 서보잉**: 웹캠으로 버튼 위치를 잡고 팔 자세를 보정하는 폐루프 제어. 사전 좌표 티칭 방식은 패널 위치가 조금만 달라도 실패하므로 채택하지 않았습니다.
   - **Depth 카메라 사용 여부는 미확정**입니다. 단안 웹캠만으로 정렬 정확도가 나오는지가 판단 기준입니다.
   </details>
@@ -142,9 +156,9 @@ PackagU는 **건물을 고치지 않고 엘리베이터를 타는** 실내 택�
   - **구조**: 2륜 차동 구동 + 볼롤러 베어링 1개. 직경 7 cm급 고무/우레탄 타이어(슬립 방지).
   - **토크 산정**: 정적 요구 약 2.4 N·m, **여유 2배 이상**을 확보하도록 모터를 선정합니다.
   - **하위 제어**: OpenCR 1.0 + Dynamixel 2륜. `LEFT_ID=1`, `RIGHT_ID=2`, `57600 bps`, Protocol 2.0, Velocity Control.
-  - **오도메트리**: OpenCR 내장 9축 IMU로 자세를 보정하고, `cmd_vel` → 좌우 바퀴 각속도 변환을 펌웨어에서 처리합니다.
+  - **시리얼 브리지**: Jetson의 `opencr_bridge_node`가 `/cmd_vel`을 좌우 바퀴 RPM(`V` 프레임, 20 Hz)으로 바꿔 OpenCR에 보내고, OpenCR 피드백(`F` 프레임, 50 Hz)으로 `/odom`·TF·`/imu`를 발행합니다. `/cmd_vel`이 500 ms 끊기면 정지 명령을 보냅니다. 프로토콜은 `docs/deployment/02_opencr_serial_protocol.md`.
   - **배선·ID 설정·회전 테스트·좌우 보정 절차**는 `docs/opencr_dynamixel_wheel_test.md`에 단계별로 문서화되어 있습니다.
-  - **구동 모터·배터리·DC-DC 컨버터 사양은 확정 대기** `[미확정]`. 이 결정이 URDF 관성값과 주행 시간을 동시에 묶고 있습니다.
+  - **구동부는 제작을 마치고 주행 동작을 확인했습니다** (2026-09-11 팀 확인). **배터리·DC-DC 컨버터 사양은 확정 대기** `[미확정]`. 이 결정이 URDF 관성값과 주행 시간을 동시에 묶고 있습니다.
   </details>
 
   <br>
@@ -171,7 +185,7 @@ PackagU는 **건물을 고치지 않고 엘리베이터를 타는** 실내 택�
   - **compose 3종**: `docker-compose.linux.yml` · `docker-compose.windows.yml` · `docker-compose.jetson.yml`. Windows는 VcXsrv X11 forwarding으로 GUI를 띄웁니다.
   - **`scripts/check_portability.py`**: 절대경로·호스트 종속 설정이 코드에 섞이지 않았는지 검사. 이식성을 리뷰어의 눈이 아니라 스크립트로 지킵니다.
   - **GHCR 자동 발행**: `.github/workflows/publish-ghcr.yml`로 이미지를 `ghcr.io/packagu/ros2-humble-slam`에 push.
-  - **aarch64 이미지 실빌드와 Jetson 실기 검증은 남아 있습니다** `[미검증]`.
+  - **aarch64 이미지(`humble-jetson`)는 Jetson에서 구동 중입니다.** 같은 `Dockerfile.jetson`으로 Jetson에서 직접 다시 빌드해 재현하는 작업(RViz2 포함)이 진행 중입니다.
   </details>
 
   <br>
@@ -229,8 +243,8 @@ PackagU는 **건물을 고치지 않고 엘리베이터를 타는** 실내 택�
        ├─ auto_floor_orchestrator   층 전환 판정 → map_server 재로드 → AMCL 재초기화
        ├─ slam_pkg                  SLAM Toolbox(맵 생성) / Nav2 + AMCL(저장 맵 주행)
        ├─ common_pkg                로봇 URDF · KKU 가상 건물 world (F1/F2/F3)
-       ├─ drive_pkg                 teleop · cmd_vel 경로
-       └─ robot_arm_pkg             4 DOF 팔 (TF 작성 중)
+       ├─ drive_pkg                 OpenCR 시리얼 브리지 (/cmd_vel → 바퀴, 피드백 → /odom · TF · /imu) · teleop
+       └─ robot_arm_pkg             버튼 누름 시퀀스 (실측 포즈 사이클 3종 · 기동 homing)
                     │
        ┌────────────┴──────────────────────────────────┐
    RPLiDAR A1m8                                  OpenCR 1.0 + Arduino Nano
@@ -252,35 +266,46 @@ PackagU
 .
 ├─ .github/                          조직 프로필 (이 문서)
 │
-├─ Code_Space/                       메인 ROS2 워크스페이스
+├─ Code_Space/                       메인 ROS2 워크스페이스 (실기 최신본: lee/jetson-live)
 │  ├─ AGENTS.md                      사람 · AI 어시스턴트 공통 작업 규칙 (필독)
 │  ├─ Roadmap/                       01 PoC → 08 안전/보안, 8단계 실행 로드맵
+│  ├─ .github/workflows/             check.yml(PR 오프라인 스위트) · publish-ghcr.yml(이미지 발행)
 │  ├─ docker/
-│  │  ├─ Dockerfile                  개발용 amd64
-│  │  ├─ Dockerfile.jetson           실기용 aarch64
-│  │  └─ compose/                    linux · windows(VcXsrv) · jetson
+│  │  ├─ Dockerfile                  개발용 amd64 (Gazebo · RViz · Nav2 · SLAM)
+│  │  ├─ Dockerfile.jetson           실기용 aarch64 (RViz2 · floor reader 런타임, Gazebo 제외)
+│  │  ├─ compose/                    linux · windows(VcXsrv) · jetson + jetson.env.example
+│  │  └─ scripts/entrypoint.sh       필수 마운트 확인 후 기동
 │  ├─ scripts/
 │  │  ├─ bootstrap_workspace.sh      월드 · 맵 생성 (최초 1회)
 │  │  ├─ run_kku_sim.sh              컨테이너 + Gazebo + SLAM + RViz 원커맨드
+│  │  ├─ run_field_mapping.sh        현장 실측 원커맨드 (launch → rosbag → 맵 저장 → 검증)
+│  │  ├─ run_rviz_jetson.sh          Jetson 화면에 RViz 사이드카 컨테이너 띄우기
+│  │  ├─ run_distributed_e2e.sh      데스크톱 Gazebo + Jetson 스택 분산 E2E
+│  │  ├─ run_arm_press.py            로봇팔 버튼 누름 실행기
 │  │  ├─ run_offline_tests.sh        오프라인 테스트 스위트 (host/CI)
+│  │  ├─ fastdds_*.xml               DDS 프로파일 (LAN unicast 피어 · UDP 전용)
+│  │  ├─ udev/                       장치 별칭 udev 규칙 + 설치 스크립트
 │  │  ├─ generate_kku_worlds.py      건국대 신공학관 모사 F1/F2/F3 world 생성
-│  │  └─ check_portability.py        호스트 종속 설정 검사
+│  │  ├─ check_portability.py        호스트 종속 설정 검사
+│  │  └─ test_*.py                   프로토콜 · launch · 배포 계약 오프라인 테스트
 │  ├─ src/
-│  │  ├─ common_pkg/                 robot.urdf.xacro · kku_f1~f3.world · gazebo.launch.py
-│  │  ├─ slam_pkg/                   slam_toolbox_params.yaml · nav2_params.yaml
-│  │  │  ├─ launch/                  slam_toolbox · kku_simulation · kku_navigation
-│  │  │  └─ maps/kku_virtual/        f1 · f2 · f3 저장 맵
-│  │  ├─ drive_pkg/                  keyboard_teleop
-│  │  └─ robot_arm_pkg/              4 DOF 팔 (TF 작성 중)
+│  │  ├─ common_pkg/                 delivery_robot.urdf.xacro · kku_f1~f3.world · gazebo.launch.py
+│  │  ├─ slam_pkg/
+│  │  │  ├─ config/                  slam_toolbox(실기 · 핸드헬드) · nav2_params · slam_view.rviz
+│  │  │  ├─ launch/                  slam_toolbox(실기) · handheld_mapping · kku_simulation · kku_navigation
+│  │  │  └─ maps/kku_virtual/        f1 · f2 · f3 가상 맵
+│  │  ├─ drive_pkg/                  OpenCR 시리얼 브리지 · 차동 오도메트리 · teleop · drive_calib.yaml
+│  │  └─ robot_arm_pkg/              버튼 누름 시퀀스 노드 · 서보 프로토콜
 │  ├─ test_workspace/
 │  │  ├─ elevator_mission/           미션 트리 · 행동 · 좌표 레지스트리 · 직교 라우터
 │  │  ├─ elevator_auto_map_switch/   층 ↔ 맵 레지스트리 · 전환 상태머신 · 오케스트레이터
-│  │  └─ gazebo_world_swap/          Gazebo 건물 모델 교체 + E2E 스모크 + verification/
+│  │  └─ gazebo_world_swap/          Gazebo 건물 모델 교체 · 보행자 · E2E 스모크 · verification/
 │  └─ docs/
 │     ├─ hardware_spec.md            하드웨어 SSOT
 │     ├─ improvement_report.md       리스크 · 개선 추적기
 │     ├─ opencr_dynamixel_wheel_test.md
-│     ├─ deployment/                 이식성 정책 · Jetson 배포 절차
+│     ├─ deployment/                 이식성 정책 · OpenCR 시리얼 프로토콜 · HW 교체 체크리스트
+│     ├─ handover/                   세션 인수인계서 · 리뷰 프롬프트
 │     └─ simulation_test/            01 환경 → 05 엘리베이터 상태머신, 단계별 실행 기록
 │
 ├─ ros2-humble-slam-docker/          컨테이너 이미지 정의 (GHCR 발행)
@@ -288,9 +313,11 @@ PackagU
 └─ 2026_graduation_project/          기획 · 설계 문서 · 최종보고서
 ```
 
+*Code_Space 구조는 Jetson `~/Code_Space` 작업 트리(`lee/jetson-live`) 기준입니다. 2026-09-11 동기화.*
+
 | 저장소 | 역할 |
 | ---- | ---- |
-| [Code_Space](https://github.com/PackagU/Code_Space) | 메인 ROS2 워크스페이스 — SLAM · Nav2 · 미션 상태머신 · 층 전환 · 시뮬레이션 |
+| [Code_Space](https://github.com/PackagU/Code_Space) | 메인 ROS2 워크스페이스 — SLAM · Nav2 · 미션 상태머신 · 층 전환 · 시뮬레이션 · Jetson 실기 배포 (실기 최신본: [`lee/jetson-live`](https://github.com/PackagU/Code_Space/tree/lee/jetson-live)) |
 | [ros2-humble-slam-docker](https://github.com/PackagU/ros2-humble-slam-docker) | 개발(amd64) / Jetson(aarch64) 공용 컨테이너 이미지 정의 |
 | [robot_arm](https://github.com/PackagU/robot_arm) | 4 DOF 로봇팔 서보 제어 실험 |
 | [2026_graduation_project](https://github.com/PackagU/2026_graduation_project) | 기획 · 하드웨어 설계 · 최종보고서 |
@@ -320,7 +347,7 @@ bash scripts/bootstrap_workspace.sh        # 월드/맵 생성 (최초 1회)
 | 2 | 저장 맵 위 Nav2 자율주행 (픽업 → 엘리베이터 복귀) | 목표 도달 `SUCCEEDED` | `[검증]` |
 | 3 | **층 전환 — F1 건물 모델 제거 + F2 스폰 + 맵 교체** | 엔티티 present/absent + `/scan` 유한값 | `[검증]` |
 | 4 | 복도 직교 경로 주행 (벽 스침 회피) | 경로 로그 + 충돌 0회 <sub>(라우터 로직 단위 테스트는 통과)</sub> | `[미검증]` |
-| 5 | 실기 2륜 Dynamixel 구동 + teleop | OpenCR 통신 확인 후 회전 테스트 | `[미검증]` |
+| 5 | 실기 2륜 Dynamixel 구동 + teleop | OpenCR 통신 확인 후 회전 테스트 | `[실물 동작 확인]` <sub>2026-09-11 팀 확인</sub> |
 | 6 | 로봇팔 버튼 누름 (정적 위치) | 반복 20회 성공률 측정 | `[미검증]` |
 | 7 | Z축 리프트 적재 · 하차 (5 kg) | 정전 시 자중 낙하 없음 확인 | `[미검증]` |
 | 8 | **Jetson 실기에서 동일 컨테이너로 end-to-end** | aarch64 이미지로 1~7 재현 | `[미검증]` |
@@ -331,7 +358,7 @@ bash scripts/bootstrap_workspace.sh        # 월드/맵 생성 (최초 1회)
 ## ⚠️ 안전 경계
 
 **PackagU는 사람이 상주하는 공간에서 무감독으로 운용할 수 있는 상태가 아닙니다.**
-현재는 시뮬레이션 검증 단계이며, 실기 투입 전에 아래 항목이 모두 닫혀야 합니다.
+현재는 실기 브링업 단계(구동부 동작 확인 → LiDAR 매핑 준비)이며, 무감독 운용 전에 아래 항목이 모두 닫혀야 합니다.
 
 - **E-stop 미구현** `[미구현]` — 소프트 정지·물리 비상 정지 버튼 모두 아직 없습니다. 실기 통전 전 선행 조건입니다.
 - **실제 엘리베이터 환경 미검증** — 금속 칸 내부의 LiDAR 반사 오차를 아직 측정하지 못했습니다.
