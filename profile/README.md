@@ -287,7 +287,8 @@ PackagU
 │  │  ├─ udev/                       장치 별칭 udev 규칙 + 설치 스크립트
 │  │  ├─ generate_kku_worlds.py      건국대 신공학관 모사 F1/F2/F3 world 생성
 │  │  ├─ check_portability.py        호스트 종속 설정 검사
-│  │  └─ test_*.py                   프로토콜 · launch · 배포 계약 오프라인 테스트
+│  │  ├─ test_*.py                   프로토콜 · launch · 배포 계약 테스트 (+ 이미지 런타임 의존성)
+│  │  └─ verify_jetson_*.sh          새 Jetson 이미지 안에서 소스 빌드 · 실행 파일 확인 (장치 없이)
 │  ├─ src/
 │  │  ├─ common_pkg/                 delivery_robot.urdf.xacro · kku_f1~f3.world · gazebo.launch.py
 │  │  ├─ slam_pkg/
