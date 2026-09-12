@@ -279,7 +279,7 @@ PackagU
 │  │  ├─ bootstrap_workspace.sh      월드 · 맵 생성 (최초 1회)
 │  │  ├─ run_kku_sim.sh              컨테이너 + Gazebo + SLAM + RViz 원커맨드
 │  │  ├─ run_field_mapping.sh        현장 실측 원커맨드 (launch → rosbag → 맵 저장 → 검증)
-│  │  ├─ start_field_*.sh            실차 단계 기동 (베이스 · SLAM 매핑 · 저장 지도 Nav2)
+│  │  ├─ start_field_*.sh            실차 단계 기동 (베이스 · SLAM 매핑 · 저장 지도 Nav2 · 웹 콘솔)
 │  │  ├─ save_field_map.sh           실차 지도 + posegraph 저장
 │  │  ├─ *_field_bag.sh · bag_*.py   현장 rosbag 기록 · 재생 · 검사 (메타 검증 후 안전 토픽만 재생)
 │  │  ├─ monitor_field_load.sh       현장 부하 · 센서 도착 간격 측정 (field_topic_metrics.py 포함)
@@ -306,6 +306,8 @@ PackagU
 │  │  │  ├─ config/                  slam_toolbox(실기 · 핸드헬드) · nav2_params · slam_view.rviz
 │  │  │  ├─ launch/                  slam_toolbox(실기) · field_base · field_mapping_only · handheld_mapping · kku_simulation · kku_navigation
 │  │  │  ├─ map_contract.py          저장 지도 엄격 검사 (실기 Nav2 시작 전)
+│  │  │  ├─ field_web_ui.py          현장 웹 콘솔 백엔드 (지도 · 수동 주행 · 매핑 · Nav2 조작)
+│  │  │  ├─ web/                      브라우저 콘솔 정적 파일 (index.html · app.js · styles.css)
 │  │  │  ├─ maps/kku_virtual/        f1 · f2 · f3 가상 맵
 │  │  │  └─ maps/handheld/           실기 핸드헬드 시험 맵 메타데이터 (yaml · 체크섬, 이미지·posegraph는 git 제외)
 │  │  ├─ drive_pkg/                  OpenCR 시리얼 브리지 · 차동 오도메트리 · fail-closed 안전 게이트 · teleop · OpenCR 펌웨어(.ino)
@@ -319,7 +321,7 @@ PackagU
 │     ├─ hardware_spec.md            하드웨어 SSOT
 │     ├─ improvement_report.md       리스크 · 개선 추적기
 │     ├─ opencr_dynamixel_wheel_test.md
-│     ├─ deployment/                 이식성 정책 · OpenCR 시리얼 프로토콜 · HW 교체 체크리스트 · 실차 매핑/Nav2 · 기록·재생 복구 가이드
+│     ├─ deployment/                 이식성 정책 · OpenCR 시리얼 프로토콜 · HW 교체 체크리스트 · 실차 매핑/Nav2 · 기록·재생 복구 · 현장 웹 콘솔 가이드
 │     ├─ handover/                   세션 인수인계서 · 리뷰 프롬프트
 │     └─ simulation_test/            01 환경 → 05 엘리베이터 상태머신, 단계별 실행 기록
 │
