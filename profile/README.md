@@ -298,6 +298,7 @@ PackagU
 │  │  ├─ *_probe.py                  무장치 런타임 프로브 (DDS 계약 · Nav2 안전 게이트 · 팔 노드)
 │  │  ├─ jetson_thermal_watchdog.sh  야간 열 · 이상 감시 (사용자 공간)
 │  │  ├─ synthetic_stationary_base.py 시험 전용 정지 베이스 퍼블리셔 (하드웨어 미연결)
+│  │  ├─ integration_safety_*.py     현장 · 전체 미션 공용 fail-closed 통합 계약
 │  │  ├─ test_*.py · test_*.sh       프로토콜 · 주행 안전 · launch · 배포 · DDS 계약 테스트 (+ 이미지 런타임 의존성)
 │  │  └─ verify_jetson_*.sh          새 Jetson 이미지 안에서 소스 빌드 · 실행 파일 확인 (장치 없이)
 │  ├─ src/
@@ -321,7 +322,7 @@ PackagU
 │     ├─ hardware_spec.md            하드웨어 SSOT
 │     ├─ improvement_report.md       리스크 · 개선 추적기
 │     ├─ opencr_dynamixel_wheel_test.md
-│     ├─ deployment/                 이식성 정책 · OpenCR 시리얼 프로토콜 · HW 교체 체크리스트 · 실차 매핑/Nav2 · 기록·재생 복구 · 현장 웹 콘솔 가이드
+│     ├─ deployment/                 01~07 — 이식성 · OpenCR 프로토콜 · HW 체크리스트 · 실차 매핑/Nav2 · 기록·재생 복구 · 웹 콘솔 · 통합 안전 계약/현장 시트
 │     ├─ handover/                   세션 인수인계서 · 리뷰 프롬프트
 │     └─ simulation_test/            01 환경 → 05 엘리베이터 상태머신, 단계별 실행 기록
 │
