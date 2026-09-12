@@ -281,6 +281,8 @@ PackagU
 │  │  ├─ run_field_mapping.sh        현장 실측 원커맨드 (launch → rosbag → 맵 저장 → 검증)
 │  │  ├─ start_field_*.sh            실차 단계 기동 (베이스 · SLAM 매핑 · 저장 지도 Nav2)
 │  │  ├─ save_field_map.sh           실차 지도 + posegraph 저장
+│  │  ├─ *_field_bag.sh · bag_*.py   현장 rosbag 기록 · 재생 · 검사 (메타 검증 후 안전 토픽만 재생)
+│  │  ├─ monitor_field_load.sh       현장 부하 · 센서 도착 간격 측정 (field_topic_metrics.py 포함)
 │  │  ├─ *_handheld_mapping.sh       핸드헬드 매핑 빌드 · 시작 · 점검 · 종료 (LiDAR + fake odom + SLAM, 구동 장치 차단·/scan·/map 확인, SIGINT 종료)
 │  │  ├─ save_handheld_map.sh        핸드헬드 맵 + posegraph 저장 (덮어쓰기 · 위험한 이름 거부)
 │  │  ├─ probe_rplidar_node.sh       RPLiDAR 드라이버 단독 15초 기동 점검 (구동 · 팔 노드 미기동)
@@ -317,7 +319,7 @@ PackagU
 │     ├─ hardware_spec.md            하드웨어 SSOT
 │     ├─ improvement_report.md       리스크 · 개선 추적기
 │     ├─ opencr_dynamixel_wheel_test.md
-│     ├─ deployment/                 이식성 정책 · OpenCR 시리얼 프로토콜 · HW 교체 체크리스트 · 실차 매핑/Nav2 가이드
+│     ├─ deployment/                 이식성 정책 · OpenCR 시리얼 프로토콜 · HW 교체 체크리스트 · 실차 매핑/Nav2 · 기록·재생 복구 가이드
 │     ├─ handover/                   세션 인수인계서 · 리뷰 프롬프트
 │     └─ simulation_test/            01 환경 → 05 엘리베이터 상태머신, 단계별 실행 기록
 │
