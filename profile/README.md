@@ -27,8 +27,8 @@ PackagU는 **건물을 고치지 않고 엘리베이터를 타는** 실내 택�
 | --- | --- |
 | 시뮬레이션 | 왕복 배달 체인 10/10 연속 PASS · 데스크톱 Gazebo + Jetson 분산 E2E 3/3 완주 (2026-08-21) |
 | 실기 구동부 | 제작 완료 · 주행 동작 확인 (2026-09-11 팀 확인) |
-| 실기 LiDAR | Jetson에 RPLiDAR 연결 → `/scan` → SLAM Toolbox 지도 → RViz 표시 확인 (2026-09-10) · 손에 들고 걷는 핸드헬드 시험 맵과 posegraph 저장 (2026-09-11, 지도 품질 미평가) |
-| **지금 하는 일** | **2026-09-12 신공학관 실차 매핑** — 매핑 → 지도 저장 → 저장 지도 Nav2 단계별 스크립트와 현장 가이드 준비, 팔 실행 계약(P05) 코드 반영, 실차 전환·야간 안전 감시(P06) 진행 중 |
+| 실기 LiDAR | RPLiDAR → `/scan` → SLAM Toolbox 지도 → RViz 표시 확인 (2026-09-10) · 핸드헬드 시험 맵 저장 (2026-09-11) · **F3 복도 실측 맵 저장 (2026-09-12, 0.05 m/cell, 품질 미평가)** |
+| **지금 하는 일** | **2026-09-12 신공학관 실차 매핑 진행 중** — F3 복도 실측 맵 저장까지 완료, 문서상 다음 단계는 저장 지도 Nav2 기동과 첫 자율주행 시험 (복도 시험은 구동부만, 팔·리프트 전원 분리) |
 
 실기 최신 코드는 [Code_Space · `lee/jetson-live`](https://github.com/PackagU/Code_Space/tree/lee/jetson-live)에 있습니다.
 Jetson `~/Code_Space` 작업 트리를 그대로 옮겨 오는 미러 브랜치라, 아직 커밋·리뷰 전인 변경도 들어 있습니다.
@@ -310,7 +310,8 @@ PackagU
 │  │  │  ├─ field_web_ui.py          현장 웹 콘솔 백엔드 (지도 · 수동 주행 · 매핑 · Nav2 조작)
 │  │  │  ├─ web/                      브라우저 콘솔 정적 파일 (index.html · app.js · styles.css)
 │  │  │  ├─ maps/kku_virtual/        f1 · f2 · f3 가상 맵
-│  │  │  └─ maps/handheld/           실기 핸드헬드 시험 맵 메타데이터 (yaml · 체크섬, 이미지·posegraph는 git 제외)
+│  │  │  ├─ maps/handheld/           실기 핸드헬드 시험 맵 메타데이터 (yaml · 체크섬, 이미지·posegraph는 git 제외)
+│  │  │  └─ maps/field/              실측 맵 메타데이터 (F3 복도 · yaml · 체크섬, 이미지·posegraph는 git 제외)
 │  │  ├─ drive_pkg/                  OpenCR 시리얼 브리지 · 차동 오도메트리 · fail-closed 안전 게이트 · teleop · OpenCR 펌웨어(.ino)
 │  │  └─ robot_arm_pkg/              버튼 누름 시퀀스 노드 · 서보 프로토콜 · 피드백 기반 실행 계약(시작 · 완료 · 취소)
 │  ├─ test_workspace/
