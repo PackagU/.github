@@ -28,7 +28,7 @@ PackagU는 **건물을 고치지 않고 엘리베이터를 타는** 실내 택�
 | 시뮬레이션 | 왕복 배달 체인 10/10 연속 PASS · 데스크톱 Gazebo + Jetson 분산 E2E 3/3 완주 (2026-08-21) |
 | 실기 구동부 | 제작 완료 · 주행 동작 확인 (2026-09-11 팀 확인) |
 | 실기 LiDAR | Jetson에 RPLiDAR 연결 → `/scan` → SLAM Toolbox 지도 → RViz 표시 확인 (2026-09-10) · 손에 들고 걷는 핸드헬드 시험 맵과 posegraph 저장 (2026-09-11, 지도 품질 미평가) |
-| **지금 하는 일** | 바퀴 오도메트리 + LiDAR로 **실기 주행 매핑** 준비 — 주행 정지·오류 입력 계약 오프라인 검증(P04) 완료, 팔 시작·완료·취소 계약 점검(P05) 진행 중 |
+| **지금 하는 일** | **2026-09-12 신공학관 실차 매핑** — 매핑 → 지도 저장 → 저장 지도 Nav2 단계별 스크립트와 현장 가이드 준비, 팔 실행 계약(P05) 코드 반영, 실차 전환·야간 안전 감시(P06) 진행 중 |
 
 실기 최신 코드는 [Code_Space · `lee/jetson-live`](https://github.com/PackagU/Code_Space/tree/lee/jetson-live)에 있습니다.
 Jetson `~/Code_Space` 작업 트리를 그대로 옮겨 오는 미러 브랜치라, 아직 커밋·리뷰 전인 변경도 들어 있습니다.
@@ -139,7 +139,7 @@ Jetson `~/Code_Space` 작업 트리를 그대로 옮겨 오는 미러 브랜치�
 
   - **구성**: 총 길이 60 cm, 엔코더 내장 360° 서보 1개 + 180° 서보 3개 (4 DOF).
   - **엔드이펙터**: 고무 팁 또는 스프링 완충 구조. **버튼을 망가뜨리지 않는 것**이 요구사항입니다.
-  - **현재 상태**: 실측 포즈 기반 버튼 누름 사이클 3종(`press_cycle`)과 기동 homing이 `robot_arm_pkg`에 들어갔고, 원커맨드 실행기는 PR 검토 중입니다 `[미검증]`. 팔 TF(`base → … → end_effector`)가 서야 IK와 비주얼 서보잉이 그 위에 올라갑니다.
+  - **현재 상태**: 실측 포즈 기반 버튼 누름 사이클 3종(`press_cycle`)과 기동 homing이 `robot_arm_pkg`에 들어갔고, **시간 경과가 아니라 서보 4개의 위치 피드백이 명령값과 일치해야 완료로 인정하는 실행 계약**도 코드에 반영됐습니다 `[미검증]`. 취소는 요청 수명주기만 끝낼 뿐 기계적 정지를 증명하지 못합니다. 팔 TF(`base → … → end_effector`)가 서야 IK와 비주얼 서보잉이 그 위에 올라갑니다.
   - **비주얼 서보잉**: 웹캠으로 버튼 위치를 잡고 팔 자세를 보정하는 폐루프 제어. 사전 좌표 티칭 방식은 패널 위치가 조금만 달라도 실패하므로 채택하지 않았습니다.
   - **Depth 카메라 사용 여부는 미확정**입니다. 단안 웹캠만으로 정렬 정확도가 나오는지가 판단 기준입니다.
   </details>
@@ -273,12 +273,14 @@ PackagU
 │  ├─ docker/
 │  │  ├─ Dockerfile                  개발용 amd64 (Gazebo · RViz · Nav2 · SLAM)
 │  │  ├─ Dockerfile.jetson           실기용 aarch64 (RViz2 · floor reader 런타임, Gazebo 제외)
-│  │  ├─ compose/                    linux · windows(VcXsrv) · jetson (+ safe 무동작 · lidar 전용 오버레이) + jetson.env.example
+│  │  ├─ compose/                    linux · windows(VcXsrv) · jetson (+ safe 무동작 · lidar 전용 · mapping 실차 오버레이) + jetson.env.example
 │  │  └─ scripts/entrypoint.sh       필수 마운트 확인 후 기동
 │  ├─ scripts/
 │  │  ├─ bootstrap_workspace.sh      월드 · 맵 생성 (최초 1회)
 │  │  ├─ run_kku_sim.sh              컨테이너 + Gazebo + SLAM + RViz 원커맨드
 │  │  ├─ run_field_mapping.sh        현장 실측 원커맨드 (launch → rosbag → 맵 저장 → 검증)
+│  │  ├─ start_field_*.sh            실차 단계 기동 (베이스 · SLAM 매핑 · 저장 지도 Nav2)
+│  │  ├─ save_field_map.sh           실차 지도 + posegraph 저장
 │  │  ├─ *_handheld_mapping.sh       핸드헬드 매핑 빌드 · 시작 · 점검 · 종료 (LiDAR + fake odom + SLAM, 구동 장치 차단·/scan·/map 확인, SIGINT 종료)
 │  │  ├─ save_handheld_map.sh        핸드헬드 맵 + posegraph 저장 (덮어쓰기 · 위험한 이름 거부)
 │  │  ├─ probe_rplidar_node.sh       RPLiDAR 드라이버 단독 15초 기동 점검 (구동 · 팔 노드 미기동)
@@ -291,27 +293,31 @@ PackagU
 │  │  ├─ generate_kku_worlds.py      건국대 신공학관 모사 F1/F2/F3 world 생성
 │  │  ├─ check_portability.py        호스트 종속 설정 검사
 │  │  ├─ jetson_preflight.py         실행 중인 Jetson 컨테이너의 무동작 · 라이다 배포 계약 점검 (읽기 전용)
-│  │  ├─ dds_contract_probe.py       DDS 계약 프로브 (늦은 구독 · QoS · 서비스 · tf_static · map)
+│  │  ├─ *_probe.py                  무장치 런타임 프로브 (DDS 계약 · Nav2 안전 게이트 · 팔 노드)
+│  │  ├─ jetson_thermal_watchdog.sh  야간 열 · 이상 감시 (사용자 공간)
+│  │  ├─ synthetic_stationary_base.py 시험 전용 정지 베이스 퍼블리셔 (하드웨어 미연결)
 │  │  ├─ test_*.py · test_*.sh       프로토콜 · 주행 안전 · launch · 배포 · DDS 계약 테스트 (+ 이미지 런타임 의존성)
 │  │  └─ verify_jetson_*.sh          새 Jetson 이미지 안에서 소스 빌드 · 실행 파일 확인 (장치 없이)
 │  ├─ src/
 │  │  ├─ common_pkg/                 delivery_robot.urdf.xacro · kku_f1~f3.world · gazebo.launch.py
 │  │  ├─ slam_pkg/
 │  │  │  ├─ config/                  slam_toolbox(실기 · 핸드헬드) · nav2_params · slam_view.rviz
-│  │  │  ├─ launch/                  slam_toolbox(실기) · handheld_mapping · kku_simulation · kku_navigation
+│  │  │  ├─ launch/                  slam_toolbox(실기) · field_base · field_mapping_only · handheld_mapping · kku_simulation · kku_navigation
+│  │  │  ├─ map_contract.py          저장 지도 엄격 검사 (실기 Nav2 시작 전)
 │  │  │  ├─ maps/kku_virtual/        f1 · f2 · f3 가상 맵
 │  │  │  └─ maps/handheld/           실기 핸드헬드 시험 맵 메타데이터 (yaml · 체크섬, 이미지·posegraph는 git 제외)
-│  │  ├─ drive_pkg/                  OpenCR 시리얼 브리지 · 차동 오도메트리 · teleop · drive_calib.yaml
+│  │  ├─ drive_pkg/                  OpenCR 시리얼 브리지 · 차동 오도메트리 · fail-closed 안전 게이트 · teleop · OpenCR 펌웨어(.ino)
 │  │  └─ robot_arm_pkg/              버튼 누름 시퀀스 노드 · 서보 프로토콜 · 피드백 기반 실행 계약(시작 · 완료 · 취소)
 │  ├─ test_workspace/
 │  │  ├─ elevator_mission/           미션 트리 · 행동 · 좌표 레지스트리 · 직교 라우터
 │  │  ├─ elevator_auto_map_switch/   층 ↔ 맵 레지스트리 · 전환 상태머신 · 오케스트레이터
 │  │  └─ gazebo_world_swap/          Gazebo 건물 모델 교체 · 보행자 · E2E 스모크 · verification/
+│  ├─ watchdog_logs/                 야간 열 · 이상 감시 기록
 │  └─ docs/
 │     ├─ hardware_spec.md            하드웨어 SSOT
 │     ├─ improvement_report.md       리스크 · 개선 추적기
 │     ├─ opencr_dynamixel_wheel_test.md
-│     ├─ deployment/                 이식성 정책 · OpenCR 시리얼 프로토콜 · HW 교체 체크리스트
+│     ├─ deployment/                 이식성 정책 · OpenCR 시리얼 프로토콜 · HW 교체 체크리스트 · 실차 매핑/Nav2 가이드
 │     ├─ handover/                   세션 인수인계서 · 리뷰 프롬프트
 │     └─ simulation_test/            01 환경 → 05 엘리베이터 상태머신, 단계별 실행 기록
 │
