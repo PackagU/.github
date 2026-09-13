@@ -156,7 +156,7 @@ Jetson `~/Code_Space` 작업 트리를 그대로 옮겨 오는 미러 브랜치�
   - **구조**: 2륜 차동 구동 + 볼롤러 베어링 1개. 직경 7 cm급 고무/우레탄 타이어(슬립 방지).
   - **토크 산정**: 정적 요구 약 2.4 N·m, **여유 2배 이상**을 확보하도록 모터를 선정합니다.
   - **하위 제어**: OpenCR 1.0 + Dynamixel 2륜. `LEFT_ID=1`, `RIGHT_ID=2`, `57600 bps`, Protocol 2.0, Velocity Control.
-  - **시리얼 브리지**: Jetson의 `opencr_bridge_node`가 `/cmd_vel`을 좌우 바퀴 RPM(`V` 프레임, 20 Hz)으로 바꿔 OpenCR에 보내고, OpenCR 피드백(`F` 프레임, 50 Hz)으로 `/odom`·TF·`/imu`를 발행합니다. `/cmd_vel`이 500 ms `[제안값]` 끊기거나, 첫 피드백 전·피드백 timeout·직렬 오류·범위 밖 명령/피드백이 생기면 가속 제한 없이 즉시 0으로 멈추고 `/drive/ready=false`를 냅니다. 속도·RPM 한계는 실측 전 `[제안값]`이고, 이 소프트웨어 정지가 MCU watchdog과 물리 E-Stop을 대신하지는 않습니다. 프로토콜은 `docs/deployment/02_opencr_serial_protocol.md`.
+  - **시리얼 브리지**: Jetson의 `opencr_bridge_node`가 `/cmd_vel`을 좌우 바퀴 RPM(`V` 프레임, 20 Hz)으로 바꿔 OpenCR에 보내고, OpenCR 피드백(`F` 프레임, 50 Hz)으로 `/odom`·TF·`/imu`를 발행합니다. `/cmd_vel`이 500 ms `[제안값]` 끊기거나, 첫 피드백 전·피드백 timeout·직렬 오류·범위 밖 명령/피드백이 생기면 가속 제한 없이 즉시 0으로 멈추고 `/drive/ready=false`를 냅니다. 속도·RPM 한계는 실측 전 `[제안값]`이고, 이 소프트웨어 정지가 MCU watchdog과 물리 E-Stop을 대신하지는 않습니다. IMU+바퀴 오도메트리 EKF(`robot_localization`)는 선택형 프로파일로 추가됐고, 기본 현장 경로는 여전히 브리지 오도메트리를 씁니다(IMU 펌웨어는 승인 전 후보). 프로토콜은 `docs/deployment/02_opencr_serial_protocol.md`.
   - **배선·ID 설정·회전 테스트·좌우 보정 절차**는 `docs/opencr_dynamixel_wheel_test.md`에 단계별로 문서화되어 있습니다.
   - **구동부는 제작을 마치고 주행 동작을 확인했습니다** (2026-09-11 팀 확인). **배터리·DC-DC 컨버터 사양은 확정 대기** `[미확정]`. 이 결정이 URDF 관성값과 주행 시간을 동시에 묶고 있습니다.
   </details>
@@ -272,7 +272,7 @@ PackagU
 │  ├─ .github/workflows/             check.yml(PR 오프라인 스위트) · publish-ghcr.yml(이미지 발행)
 │  ├─ docker/
 │  │  ├─ Dockerfile                  개발용 amd64 (Gazebo · RViz · Nav2 · SLAM)
-│  │  ├─ Dockerfile.jetson           실기용 aarch64 (RViz2 · floor reader 런타임, Gazebo 제외)
+│  │  ├─ Dockerfile.jetson           실기용 aarch64 (RViz2 · floor reader · robot_localization 런타임, Gazebo 제외)
 │  │  ├─ compose/                    linux · windows(VcXsrv) · jetson (+ safe 무동작 · lidar 전용 · mapping 실차 오버레이) + jetson.env.example
 │  │  └─ scripts/entrypoint.sh       필수 마운트 확인 후 기동
 │  ├─ scripts/
@@ -313,7 +313,7 @@ PackagU
 │  │  │  ├─ maps/kku_virtual/        f1 · f2 · f3 가상 맵
 │  │  │  ├─ maps/handheld/           실기 핸드헬드 시험 맵 메타데이터 (yaml · 체크섬, 이미지·posegraph는 git 제외)
 │  │  │  └─ maps/field/              실측 맵 메타데이터 (F3 복도 · yaml · 체크섬, 이미지·posegraph는 git 제외)
-│  │  ├─ drive_pkg/                  OpenCR 시리얼 브리지 · 차동 오도메트리 · fail-closed 안전 게이트 · teleop · OpenCR 펌웨어(.ino)
+│  │  ├─ drive_pkg/                  OpenCR 시리얼 브리지 · 차동 오도메트리 · 선택형 IMU+EKF 융합 · fail-closed 안전 게이트 · teleop · OpenCR 펌웨어(.ino, IMU 후보 포함)
 │  │  └─ robot_arm_pkg/              버튼 누름 시퀀스 노드 · 서보 프로토콜 · 피드백 기반 실행 계약(시작 · 완료 · 취소)
 │  ├─ test_workspace/
 │  │  ├─ elevator_mission/           미션 트리 · 행동 · 좌표 레지스트리 · 직교 라우터
