@@ -296,7 +296,7 @@ PackagU
 │  │  ├─ generate_kku_worlds.py      건국대 신공학관 모사 F1/F2/F3 world 생성
 │  │  ├─ check_portability.py        호스트 종속 설정 검사
 │  │  ├─ jetson_preflight.py         실행 중인 Jetson 컨테이너의 무동작 · 라이다 배포 계약 점검 (읽기 전용)
-│  │  ├─ *_probe.py                  무장치 런타임 프로브 (DDS 계약 · Nav2 안전 게이트 · 팔 노드)
+│  │  ├─ *_probe.py                  명령을 내지 않는 런타임 프로브 (DDS 계약 · Nav2 안전 게이트 · 팔 노드 · 주행 명령 체인 정지 분류)
 │  │  ├─ jetson_thermal_watchdog.sh  야간 열 · 이상 감시 (사용자 공간)
 │  │  ├─ synthetic_stationary_base.py 시험 전용 정지 베이스 퍼블리셔 (하드웨어 미연결)
 │  │  ├─ integration_safety_*.py     현장 · 전체 미션 공용 fail-closed 통합 계약
