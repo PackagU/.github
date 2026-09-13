@@ -316,7 +316,7 @@ PackagU
 │  │  │  ├─ web/                      브라우저 콘솔 정적 파일 (index.html · app.js · styles.css)
 │  │  │  ├─ maps/kku_virtual/        f1 · f2 · f3 가상 맵
 │  │  │  ├─ maps/handheld/           실기 핸드헬드 시험 맵 메타데이터 (yaml · 체크섬, 이미지·posegraph는 git 제외)
-│  │  │  └─ maps/field/              실측 맵 메타데이터 (F3 복도 · yaml · 체크섬, 이미지·posegraph는 git 제외)
+│  │  │  └─ maps/field/              실측 맵 메타데이터 (F3 복도 · yaml · 체크섬 · 웨이포인트 waypoints.json, 이미지·posegraph는 git 제외)
 │  │  ├─ drive_pkg/                  OpenCR 시리얼 브리지 · 차동 오도메트리 · 선택형 IMU+EKF 융합 · fail-closed 안전 게이트 · teleop · OpenCR 펌웨어(.ino, IMU 후보 포함)
 │  │  └─ robot_arm_pkg/              버튼 누름 시퀀스 노드 · 서보 프로토콜 · 피드백 기반 실행 계약(시작 · 완료 · 취소)
 │  ├─ test_workspace/
