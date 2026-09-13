@@ -320,7 +320,7 @@ PackagU
 │  │  ├─ drive_pkg/                  OpenCR 시리얼 브리지 · 차동 오도메트리 · 선택형 IMU+EKF 융합 · fail-closed 안전 게이트 · teleop · OpenCR 펌웨어(.ino, IMU 후보 포함)
 │  │  └─ robot_arm_pkg/              버튼 누름 시퀀스 노드 · 서보 프로토콜 · 피드백 기반 실행 계약(시작 · 완료 · 취소)
 │  ├─ test_workspace/
-│  │  ├─ elevator_mission/           미션 트리 · 행동 · 좌표 레지스트리 · 직교 라우터
+│  │  ├─ elevator_mission/           미션 트리 · 행동 · 좌표 레지스트리 · 직교 라우터 · 미션 안전 FSM
 │  │  ├─ elevator_auto_map_switch/   층 ↔ 맵 레지스트리 · 전환 상태머신 · 오케스트레이터
 │  │  └─ gazebo_world_swap/          Gazebo 건물 모델 교체 · 보행자 · E2E 스모크 · verification/
 │  ├─ watchdog_logs/                 야간 열 · 이상 감시 기록
