@@ -280,6 +280,7 @@ PackagU
 │  │  ├─ run_kku_sim.sh              컨테이너 + Gazebo + SLAM + RViz 원커맨드
 │  │  ├─ run_field_mapping.sh        현장 실측 원커맨드 (launch → rosbag → 맵 저장 → 검증)
 │  │  ├─ start_field_*.sh            실차 단계 기동 (베이스 · SLAM 매핑 · 저장 지도 Nav2 · 웹 콘솔)
+│  │  ├─ fieldctl · field_nav_cli.py 터미널 현장 내비 조작 (웨이포인트 · 상태 · 목표, 웹 콘솔보다 가벼움)
 │  │  ├─ save_field_map.sh           실차 지도 + posegraph 저장
 │  │  ├─ *_field_bag.sh · bag_*.py   현장 rosbag 기록 · 재생 · 검사 (메타 검증 후 안전 토픽만 재생)
 │  │  ├─ monitor_field_load.sh       현장 부하 · 센서 도착 간격 측정 (field_topic_metrics.py 포함)
