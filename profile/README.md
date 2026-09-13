@@ -166,6 +166,7 @@ Jetson `~/Code_Space` 작업 트리를 그대로 옮겨 오는 미러 브랜치�
     <summary>Z축 리프트 상세설명 ⏬</summary>
 
   - **구동**: 웜기어 DC 모터 + T형 리드스크류. 스트로크 70 cm, 최대 하중 5 kg.
+  - **현재 코드**: Arduino Uno + TB6600 드라이버의 무센서 jog 펌웨어를 감싸는 fail-closed CLI 어댑터(`lift_uno_adapter.py`)가 있습니다. 원점·리미트 센서가 없어 최종 구동 방식은 미확정입니다 `[미검증]`.
   - **self-locking을 요구사항으로 못 박았습니다.** 웜기어는 역구동이 안 되므로 전원이 끊겨도 적재물이 자중으로 내려오지 않습니다. 별도 브레이크를 달지 않아도 되는 이유입니다.
   - **가이드·케이블**: 리니어 샤프트 수직 가이드, 유연 케이블 체인으로 상하 이동 배선을 관리합니다.
   - **본체 외형은 Fusion 360 설계 완료** `[완료]`. 무게중심·관성 데이터를 URDF inertial 블록에 반영하는 작업이 연계됩니다.
@@ -290,6 +291,8 @@ PackagU
 │  │  ├─ run_rviz_jetson.sh          Jetson 화면에 RViz 사이드카 컨테이너 띄우기
 │  │  ├─ run_distributed_e2e.sh      데스크톱 Gazebo + Jetson 스택 분산 E2E
 │  │  ├─ run_arm_press.py            로봇팔 버튼 누름 실행기
+│  │  ├─ arm_servo_menu.py           팔 서보 단독 메뉴 (기본 dry-run, 기동 시 무동작)
+│  │  ├─ lift_uno_adapter.py         Z축 리프트 CLI (Uno + TB6600 무센서 jog, fail-closed)
 │  │  ├─ run_offline_tests.sh        오프라인 테스트 스위트 (host/CI)
 │  │  ├─ fastdds_*.xml               DDS 프로파일 (LAN unicast 피어 · UDP 전용)
 │  │  ├─ udev/                       장치 별칭 udev 규칙 + 설치 스크립트
