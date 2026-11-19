@@ -2,9 +2,9 @@
 
 엘리베이터 버튼을 4 DOF 로봇팔로 직접 눌러 층을 옮기는 실내 택배 배달 로봇이다. 건국대학교 전기전자공학부 2026 종합설계 5조가 만들었다.
 
-<!-- VIDEO_SLOT: hero_gif -->
 <p align="center">
-  <img src="assets/robot_labeled.jpg" alt="PackagU 실물 로봇" width="460" />
+  <img src="assets/e2e_demo.gif" alt="PackagU 실물 배달 시연 하이라이트" height="340" />
+  <img src="assets/robot_labeled.jpg" alt="PackagU 실물 로봇" height="340" />
 </p>
 
 <p align="center">
